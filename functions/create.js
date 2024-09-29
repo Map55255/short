@@ -78,7 +78,7 @@ export async function onRequest(context) {
 
         // 如果自定义slug
         if (slug) {
-            const existUrl = await env.DB.prepare(`SELECT url as existUrl FROM links where slug = '${slug}'`).first()
+            const existUrl = await process.env.DB.prepare(`SELECT url as existUrl FROM links where slug = '${slug}'`).first()
 
             // url & slug 是一样的。
             if (existUrl && existUrl.existUrl === url) {
@@ -98,7 +98,7 @@ export async function onRequest(context) {
         }
 
         // 目标 url 已存在
-        const existSlug = await env.DB.prepare(`SELECT slug as existSlug FROM links where url = '${url}'`).first()
+        const existSlug = await process.env.DB.prepare(`SELECT slug as existSlug FROM links where url = '${url}'`).first()
 
         // url 存在且没有自定义 slug
         if (existSlug && !slug) {
@@ -121,7 +121,7 @@ export async function onRequest(context) {
         const slug2 = slug ? slug : generateRandomString(4);
         // console.log('slug', slug2);
 
-        const info = await env.DB.prepare(`INSERT INTO links (url, slug, ip, status, ua, create_time) 
+        const info = await process.env.DB.prepare(`INSERT INTO links (url, slug, ip, status, ua, create_time) 
         VALUES ('${url}', '${slug2}', '${clientIP}',1, '${userAgent}', '${formattedDate}')`).run()
 
         return Response.json({ slug: slug2, link: `${origin}/${slug2}` },{
